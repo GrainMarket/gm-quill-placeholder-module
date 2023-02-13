@@ -1919,10 +1919,7 @@ function getPlaceholderBlot(Quill) {
         function PlaceholderBlot() {
             _classCallCheck(this, PlaceholderBlot);
 
-            var _this = _possibleConstructorReturn(this, (PlaceholderBlot.__proto__ || Object.getPrototypeOf(PlaceholderBlot)).apply(this, arguments));
-
-            _this.domNode = _this.domNode;
-            return _this;
+            return _possibleConstructorReturn(this, (PlaceholderBlot.__proto__ || Object.getPrototypeOf(PlaceholderBlot)).apply(this, arguments));
         }
 
         _createClass(PlaceholderBlot, [{
@@ -1938,20 +1935,24 @@ function getPlaceholderBlot(Quill) {
         }], [{
             key: "create",
             value: function create(value) {
-                console.log("creating");
                 var node = _get(PlaceholderBlot.__proto__ || Object.getPrototypeOf(PlaceholderBlot), "create", this).call(this, value);
-                console.log(node);
                 if (value.required) node.setAttribute('data-required', 'true');
                 node.setAttribute('data-id', value.id);
                 node.setAttribute('data-label', value.label);
                 node.setAttribute('spellcheck', 'false');
-                node.setAttribute('testattri', 'false');
+                console.log("testing");
                 var delimiters = PlaceholderBlot.delimiters;
 
                 var label = typeof delimiters === 'string' ? "" + delimiters + value.label + delimiters : "" + delimiters[0] + value.label + (delimiters[1] || delimiters[0]);
                 var labelNode = document.createTextNode(label);
-                node.appendChild(labelNode);
-                console.log("2", node);
+                if (Quill.version < '1.3') {
+                    var wrapper = document.createElement('span');
+                    wrapper.setAttribute('contenteditable', 'false');
+                    wrapper.appendChild(labelNode);
+                    node.appendChild(wrapper);
+                } else {
+                    node.appendChild(labelNode);
+                }
                 return node;
             }
         }, {

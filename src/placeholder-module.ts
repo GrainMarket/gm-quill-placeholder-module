@@ -1,5 +1,5 @@
 import * as QuillTypes from 'quill'
-import {Registry} from 'parchment'
+import {default as ParchmentTypes} from 'parchment'
 
 import getPlaceholderBlot from './placeholder-blot'
 import {Placeholder} from './placeholder'
@@ -12,6 +12,7 @@ export interface ModuleType {
 export default function getPlaceholderModule(Quill: QuillTypes.Quill, options?: {
   className?: string
 }): ModuleType {
+  const Parchment: typeof ParchmentTypes = Quill.import('parchment')
 
   const PlaceholderBlot = getPlaceholderBlot(Quill)
   PlaceholderBlot.className = options && options.className || 'ql-placeholder-content'
@@ -31,13 +32,12 @@ export default function getPlaceholderModule(Quill: QuillTypes.Quill, options?: 
     }
 
     onTextChange = (_: any, oldDelta: QuillTypes.DeltaStatic, source: QuillTypes.Sources) => {
-      console.log("changing")
       if (source === Quill.sources.USER) {
         const currrentContents = this.quill.getContents()
         const delta = currrentContents.diff(oldDelta)
 
         const shouldRevert = delta.ops.filter(op => op.insert &&
-            op.insert.placeholder && op.insert.placeholder.required).length
+          op.insert.placeholder && op.insert.placeholder.required).length
 
         if (shouldRevert) {
           this.quill.updateContents(delta, Quill.sources.SILENT)
@@ -46,8 +46,8 @@ export default function getPlaceholderModule(Quill: QuillTypes.Quill, options?: 
     }
 
     onClick = (ev: QuillTypes.EditorEvent) => {
-      const blot = Registry.find(ev.target.parentNode)
-      console.log("clicking")
+      const blot = Parchment.find(ev.target.parentNode)
+
       if (blot instanceof PlaceholderBlot) {
         const index = this.quill.getIndex(blot)
         this.quill.setSelection(index, blot.length(), Quill.sources.USER)

@@ -1,22 +1,20 @@
 import * as QuillTypes from 'quill'
-import {EmbedBlot} from 'parchment'
+import {default as ParchmentTypes} from 'parchment'
 
 import {Placeholder} from './placeholder'
 
 export default function getPlaceholderBlot(Quill: QuillTypes.Quill): any {
-  const Embed: typeof EmbedBlot = Quill.import('blots/embed')
+  const Embed: typeof ParchmentTypes.Embed = Quill.import('blots/embed')
 
   class PlaceholderBlot extends Embed {
     static blotName = 'placeholder'
     static tagName = 'span'
     static className: string
     static delimiters: Array<string>
-    public domNode: HTMLElement = this.domNode
+    public domNode: HTMLElement
 
     static create(value: Placeholder) {
-      console.log("creating");
       let node: HTMLElement = <HTMLElement>super.create(value)
-      console.log(node)
 
       if (value.required) node.setAttribute('data-required', 'true')
       node.setAttribute('data-id', value.id)
@@ -24,15 +22,25 @@ export default function getPlaceholderBlot(Quill: QuillTypes.Quill): any {
       node.setAttribute('spellcheck', 'false')
       node.setAttribute('testattri', 'false')
 
+      console.log("testing")
+
       const {delimiters} = PlaceholderBlot
       const label = typeof delimiters === 'string' ?
-          `${delimiters}${value.label}${delimiters}` :
-          `${delimiters[0]}${value.label}${delimiters[1] || delimiters[0]}`
+        `${delimiters}${value.label}${delimiters}` :
+        `${delimiters[0]}${value.label}${delimiters[1] || delimiters[0]}`
 
       const labelNode = document.createTextNode(label)
 
-      node.appendChild(labelNode)
-      console.log("2", node)
+      if (Quill.version < '1.3') {
+        const wrapper = document.createElement('span')
+        wrapper.setAttribute('contenteditable', 'false')
+        wrapper.appendChild(labelNode)
+
+        node.appendChild(wrapper)
+      } else {
+        node.appendChild(labelNode)
+      }
+
 
       return node
     }
