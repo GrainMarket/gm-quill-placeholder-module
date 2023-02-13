@@ -31,6 +31,7 @@ export default function getPlaceholderModule(Quill: QuillTypes.Quill, options?: 
     }
 
     onTextChange = (_: any, oldDelta: QuillTypes.DeltaStatic, source: QuillTypes.Sources) => {
+      console.log("changing")
       if (source === Quill.sources.USER) {
         const currrentContents = this.quill.getContents()
         const delta = currrentContents.diff(oldDelta)
@@ -46,7 +47,7 @@ export default function getPlaceholderModule(Quill: QuillTypes.Quill, options?: 
 
     onClick = (ev: QuillTypes.EditorEvent) => {
       const blot = Registry.find(ev.target.parentNode)
-
+      console.log("clicking")
       if (blot instanceof PlaceholderBlot) {
         const index = this.quill.getIndex(blot)
         this.quill.setSelection(index, blot.length(), Quill.sources.USER)

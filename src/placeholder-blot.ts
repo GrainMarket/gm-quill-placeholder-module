@@ -14,12 +14,15 @@ export default function getPlaceholderBlot(Quill: QuillTypes.Quill): any {
     public domNode: HTMLElement = this.domNode
 
     static create(value: Placeholder) {
+      console.log("creating");
       let node: HTMLElement = <HTMLElement>super.create(value)
+      console.log(node)
 
       if (value.required) node.setAttribute('data-required', 'true')
       node.setAttribute('data-id', value.id)
       node.setAttribute('data-label', value.label)
       node.setAttribute('spellcheck', 'false')
+      node.setAttribute('testattri', 'false')
 
       const {delimiters} = PlaceholderBlot
       const label = typeof delimiters === 'string' ?
@@ -29,6 +32,7 @@ export default function getPlaceholderBlot(Quill: QuillTypes.Quill): any {
       const labelNode = document.createTextNode(label)
 
       node.appendChild(labelNode)
+      console.log("2", node)
 
       return node
     }
